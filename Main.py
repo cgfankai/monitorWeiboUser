@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import urllib.request, json
-import com.fankai.weibo.DatabaseUtil
-import com.fankai.weibo.Notication
-import sys, time, os
+import json
 import logging
+import os
+import sys
+import time
+import urllib.request
+import DatabaseUtil
+import Notication
 
 logging.basicConfig(filename='log.txt', level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 
-containerid = ['********', '********', '*******']
+containerid = ['******','******']
 
 
 def write_img_file(img_url, filename):
@@ -65,11 +68,11 @@ def parse_json(cards):
                 data["user"] = blog['user']
                 data["user_id"] = data["user"]['id']
                 data["screen_name"] = data["user"]['screen_name']
-                if not com.fankai.weibo.DatabaseUtil.is_have_blog_id(data["blog_id"], data["user_id"]):
+                if not DatabaseUtil.is_have_blog_id(data["blog_id"], data["user_id"]):
 
                     # 保存数据库
-                    com.fankai.weibo.DatabaseUtil.insert(data["user_id"], data["blog_id"], data["text"], data["source"],
-                                                         data["screen_name"], data["retweeted_status"])
+                    DatabaseUtil.insert(data["user_id"], data["blog_id"], data["text"], data["source"],
+                                        data["screen_name"], data["retweeted_status"])
                     # 下载微博图片
                     filenames = []
                     if data['pics'] is not None:
@@ -82,13 +85,13 @@ def parse_json(cards):
                             filenames.append(file_name)
                             write_img_file(img_url, file_name)
                     # send email
-                    com.fankai.weibo.Notication.send_email(data["screen_name"], data["text"], filenames)
+                    Notication.send_email(data["screen_name"], data["text"], filenames)
                 else:
                     logging.info('database has this record.')
 
 
 if __name__ == "__main__":
-    com.fankai.weibo.DatabaseUtil.createTable('weibo')
+    DatabaseUtil.createTable('weibo')
     if not os.path.exists('img'):
         os.mkdir("img")
     while True:

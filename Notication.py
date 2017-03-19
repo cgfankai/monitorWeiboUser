@@ -10,7 +10,7 @@ logging.basicConfig(filename='log.txt', level=logging.INFO, format='%(asctime)s 
 
 mail_host = "smtp.126.com"
 mail_user = 'lightmoonservice@126.com'
-mail_passwd = '******'
+mail_passwd = '*******'
 my_email = '******'
 
 
