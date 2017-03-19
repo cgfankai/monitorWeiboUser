@@ -1,17 +1,20 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import urllib.request, json
 import com.fankai.weibo.DatabaseUtil
 import com.fankai.weibo.Notication
-import threading, sys, time
+import sys, time, os
 import logging
 
 logging.basicConfig(filename='log.txt', level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 
-containerid = ['......', '.......']
+containerid = ['********', '********', '*******']
 
 
 def write_img_file(img_url, filename):
-    thread = threading.Thread(target=from_url_to_file(img_url, filename))
-    thread.start()
+    # thread = threading.Thread(target=)
+    # thread.start()
+    from_url_to_file(img_url, filename)
 
 
 def from_url_to_file(img_url, filename):
@@ -20,7 +23,7 @@ def from_url_to_file(img_url, filename):
         req.add_header('User-Agent',
                        'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11')
         with urllib.request.urlopen(req) as html:
-            f = open(filename, 'w+b')
+            f = open('img' + os.sep + filename, 'w+b')
             f.write(html.read())
             f.flush()
         logging.info('download img success:%s', filename)
@@ -86,6 +89,8 @@ def parse_json(cards):
 
 if __name__ == "__main__":
     com.fankai.weibo.DatabaseUtil.createTable('weibo')
+    if not os.path.exists('img'):
+        os.mkdir("img")
     while True:
         for id in containerid:
             logging.info('now is get data of %s', id)

@@ -1,15 +1,17 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import smtplib
 from email.message import EmailMessage
 import imghdr
-import sys, threading
+import sys, threading, os
 import logging
 
 logging.basicConfig(filename='log.txt', level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 
 mail_host = "smtp.126.com"
-mail_user = '....'
-mail_passwd = '.....'
-my_email = '....'
+mail_user = 'lightmoonservice@126.com'
+mail_passwd = '******'
+my_email = '******'
 
 
 def send_email_impl(subject, content, files=None, To=my_email):
@@ -22,7 +24,7 @@ def send_email_impl(subject, content, files=None, To=my_email):
     msg['To'] = To
 
     for file in files:
-        with open(file, 'rb') as fp:
+        with open('img' + os.sep + file, 'rb') as fp:
             img_data = fp.read()
         msg.add_attachment(img_data, maintype='image', subtype=imghdr.what(None, img_data), filename=file)
 
