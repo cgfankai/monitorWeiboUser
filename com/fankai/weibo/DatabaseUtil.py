@@ -11,17 +11,15 @@ def createTable(tableName):
     resultList = c.fetchall()
     if (tableName,) not in resultList:
         c.execute(
-            "create table {} (user_id INTEGER NOT NULL , blog_id INTEGER NOT NULL, text TEXT, source TEXT,screen_name TEXT);".format(
+            "create table {} (user_id INTEGER NOT NULL , blog_id INTEGER NOT NULL, text TEXT, source TEXT,screen_name TEXT,retweeted_status BOOLEAN);".format(
                 tableName))
 
 
-def insert(user_id, blog_id, text, source, screen_name, table='weibo'):
-    c.execute("INSERT INTO {}(user_id, blog_id,text,source,screen_name) VALUES ({},{},{},{},{})".format(table, user_id,
-                                                                                                        blog_id, text,
-                                                                                                        source,
-                                                                                                        screen_name))
+def insert(user_id, blog_id, text, source, screen_name, retweeted_status, table='weibo'):
+    c.execute(
+        "INSERT INTO {}(user_id, blog_id,text,source,screen_name,retweeted_status) VALUES ({},{},'{}','{}','{}','{}');".format(
+            table, user_id, blog_id, text, source, screen_name, retweeted_status))
     conn.commit()
-
 
 def is_have_blog_id(blog_id, user_id, table='weibo'):
     c.execute("SELECT blog_id FROM {} WHERE blog_id = {} AND user_id = {}".format(table, blog_id, user_id))
