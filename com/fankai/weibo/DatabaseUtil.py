@@ -21,6 +21,7 @@ def insert(user_id, blog_id, text, source, screen_name, retweeted_status, table=
             table, user_id, blog_id, text, source, screen_name, retweeted_status))
     conn.commit()
 
+
 def is_have_blog_id(blog_id, user_id, table='weibo'):
     c.execute("SELECT blog_id FROM {} WHERE blog_id = {} AND user_id = {}".format(table, blog_id, user_id))
     result = len(c.fetchall())

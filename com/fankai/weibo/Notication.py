@@ -1,23 +1,24 @@
 import smtplib
 from email.message import EmailMessage
 import imghdr
-import sys
+import sys, threading
 import logging
-logging.basicConfig(filename='log.txt',level=logging.INFO,format='%(asctime)s %(levelname)s %(message)s')
+
+logging.basicConfig(filename='log.txt', level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 
 mail_host = "smtp.126.com"
-mail_user = 'lightmoonservice@126.com'
-mail_passwd = '......'
-my_email = 'cgfankai@qq.com'
+mail_user = '....'
+mail_passwd = '.....'
+my_email = '....'
 
 
-def send_email(subject, content, files = None, To=my_email):
+def send_email_impl(subject, content, files=None, To=my_email):
     if files is None:
         files = []
     msg = EmailMessage()
     msg.set_content(content)
     msg['Subject'] = subject
-    msg['From'] = 'lightmoonservice@126.com'
+    msg['From'] = mail_user
     msg['To'] = To
 
     for file in files:
@@ -30,9 +31,14 @@ def send_email(subject, content, files = None, To=my_email):
             smtp.connect(mail_host)
             smtp.login(mail_user, mail_passwd)
             smtp.send_message(msg, mail_user, To)
-            logging.info("send email success.")
+            logging.info("send email success.subject:%s", msg['Subject'])
         except:
             logging.error('send email exception:%s', sys.exc_info()[0])
+
+
+def send_email(subject, content, files=None, To=my_email):
+    thread = threading.Thread(target=send_email_impl(subject, content, files, To))
+    thread.start()
 
 
 if __name__ == "__main__":
