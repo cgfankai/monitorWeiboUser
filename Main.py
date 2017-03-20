@@ -11,7 +11,7 @@ import Notication
 
 logging.basicConfig(filename='log.txt', level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 
-containerid = ['******','******']
+containerid = []
 
 
 def write_img_file(img_url, filename):
@@ -47,7 +47,7 @@ def get_json_blog_data(id):
         logging.error('send email exception:%s', sys.exc_info()[0])
 
 
-def parse_json(cards):
+def parse_json(cards,name):
     for card in cards:
         if card['card_type'] == 9:
             blog = card['mblog']
@@ -69,7 +69,6 @@ def parse_json(cards):
                 data["user_id"] = data["user"]['id']
                 data["screen_name"] = data["user"]['screen_name']
                 if not DatabaseUtil.is_have_blog_id(data["blog_id"], data["user_id"]):
-
                     # 保存数据库
                     DatabaseUtil.insert(data["user_id"], data["blog_id"], data["text"], data["source"],
                                         data["screen_name"], data["retweeted_status"])
@@ -85,19 +84,28 @@ def parse_json(cards):
                             filenames.append(file_name)
                             write_img_file(img_url, file_name)
                     # send email
-                    Notication.send_email(data["screen_name"], data["text"], filenames)
+                    Notication.send_email(name + "    的新微博", data["text"], filenames)
                 else:
                     logging.info('database has this record.')
 
 
 if __name__ == "__main__":
     DatabaseUtil.createTable('weibo')
+    DatabaseUtil.create_container_ids_table()
+    DatabaseUtil.initial_data()
     if not os.path.exists('img'):
         os.mkdir("img")
     while True:
+        containerid = DatabaseUtil.get_container_id()
         for id in containerid:
-            logging.info('now is get data of %s', id)
-            cards = get_json_blog_data(id)
-            parse_json(cards)
-            logging.info("main sleep 30s")
-        time.sleep(30)
+            try:
+                name = DatabaseUtil.get_name_by_containerid(id)
+                logging.info('now is get data of %s', name)
+                cards = get_json_blog_data(id)
+                parse_json(cards,name)
+                logging.info("main sleep 30s")
+                time.sleep(5)
+            except:
+                logging.error('send email exception:%s', sys.exc_info()[0])
+                Notication.send_email("monitorWeibo发现异常",sys.exc_info()[0],None,None)
+        time.sleep(5)
