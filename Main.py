@@ -103,9 +103,8 @@ if __name__ == "__main__":
                 logging.info('now is get data of %s', name)
                 cards = get_json_blog_data(id)
                 parse_json(cards,name)
-                logging.info("main sleep 30s")
+                logging.info("sleep 5s")
                 time.sleep(5)
             except:
                 logging.error('send email exception:%s', sys.exc_info()[0])
                 Notication.send_email("monitorWeibo发现异常",sys.exc_info()[0],None,None)
-        time.sleep(5)
