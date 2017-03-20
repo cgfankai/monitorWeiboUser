@@ -53,7 +53,7 @@ def is_have_blog_id(blog_id, user_id, table='weibo'):
         return True
 
 def initial_data():
-    c.execute("SELECT container_id FROM container_ids WHERE container_id='1076032783743235'")
+    c.execute("SELECT container_id FROM container_ids;")
     result = c.fetchall()
     if len(result) > 0:
         return
